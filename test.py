@@ -6,14 +6,12 @@ def load_json_data(file_name):
 
 def combine_bonds(buyers_data, consumers_data):
 
-    # Transform consumers data to include 'Consumer Sr. No' instead of 'Sr No.'
-    consumers_dict = {
-        consumer["Name of the Political Party"]
-        for consumer in consumers_data
-    }
+    sum = 0
+    for consumer in consumers_data:
+        sum = sum + consumer["Denominations"]
 
 
-    return consumers_dict
+    return sum
 
 # Load data
 buyers_data = load_json_data('buyers_data.json')

@@ -1,0 +1,55 @@
+:root {
+    --bar-color-light: steelblue;
+    --bar-hover-color-light: darkorange;
+    --axis-color-light: #000;
+
+    --bar-color-dark: lightblue;
+    --bar-hover-color-dark: orange;
+    --axis-color-dark: #ddd;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bar-color: var(--bar-color-dark);
+        --bar-hover-color: var(--bar-hover-color-dark);
+        --axis-color: var(--axis-color-dark);
+    }
+}
+
+@media (prefers-color-scheme: light), (prefers-color-scheme: no-preference) {
+    :root {
+        --bar-color: var(--bar-color-light);
+        --bar-hover-color: var(--bar-hover-color-light);
+        --axis-color: var(--axis-color-light);
+    }
+}
+
+.bar {
+    fill: var(--bar-color);
+}
+
+.bar:hover {
+    fill: var(--bar-hover-color);
+}
+
+.axis-label {
+    font-size: 14px;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: var(--axis-color);
+}
+/* svg {
+    background-color: #333;
+}
+.label {
+    fill: white;
+    stroke: none;
+    font-size: 12px;
+} */
+
+.row {
+    margin-top: 2dvi;
+}

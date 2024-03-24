@@ -44,16 +44,41 @@ def combine_bonds(buyers_data, consumers_data):
 
     return combined_data
 
+
+def process_combined_data(data, party_names):
+    processed_data = []
+    for d in data:
+        processed_data.append(
+            {
+                "PartyShortName": party_names[d["Name of the Political Party"] or ""],
+                "Status": d["Status"],
+                "Denominations": d["Denominations"],
+                "Bond Number": d["Bond Number"],
+                "PurchaseDate": d["Date of Purchase"],
+                "EncashmentDate": d["Date of Encashment"],
+                "PurchaserName": d["Name of the Purchaser"]
+            }
+        )
+    return processed_data
+
 # Load data
 buyers_data = load_json_data('buyers_data.json')
 consumers_data = load_json_data('consumers_data.json')
+party_names = load_json_data('party_names.json')
 
 # Combine and generate the new dataset
 combined_data = combine_bonds(buyers_data, consumers_data)
+
+processed_combined_data = process_combined_data(combined_data, party_names)
 
 # Save the combined data to a new JSON file
 output_file_name = 'combined_in_one.json'
 with open(output_file_name, 'w') as file:
     json.dump(combined_data, file, indent=4)
+    
+    # Save the combined data to a new JSON file
+output_file_name = 'combined_in_one_processed.json'
+with open(output_file_name, 'w') as file:
+    json.dump(processed_combined_data, file, indent=4)
 
-print(f"Combined data saved to {output_file_name}")
+print(f"Combined data saved")

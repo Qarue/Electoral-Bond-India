@@ -13,7 +13,8 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
     <script src="https://cdn.datatables.net/plug-ins/1.10.21/sorting/datetime-moment.js"></script>
-
+    <link rel="stylesheet" href="style.css">
+    <script src="https://d3js.org/d3.v6.min.js"></script>
     <style>
         .party-symbol {
             max-height: 100%;
@@ -26,9 +27,22 @@
 <body>
 
     <div class="container">
-        <h2>Political Party Bond Encashment Analysis</h2>
+        <h1>Political Party Bond Encashment Analysis</h1>
 
         <div class="row">
+            <div class="col-12">
+                <h2 class="chart-title">Total Money By Party</h2>
+                <div id="total-by-party-chart" class="chart"></div>
+            </div>
+        </div>
+        <div class="row">
+            <h2 class="chart-title">Total By Denominations</h2>
+            <div class="col-4">
+                <div id="denominationTable"></div>
+            </div>
+        </div>
+        <div class="row">
+            <h2 class="chart-title">Complete Information</h2>
             <div class="col-12">
                 <table id="bondData" class="display" style="width:100%">
                     <thead>
@@ -47,9 +61,18 @@
 
             </div>
         </div>
-
-        <script src="https://d3js.org/d3.v6.min.js"></script>
         <script type="module">
+            function indianNumberFormatter(num) {
+                if (num >= 1e7) { // For crores
+                    return `${(num / 1e7)} Crore`;
+                } else if (num >= 1e5) { // For lakhs
+                    return `${(num / 1e5)} Lakh`;
+                } else if (num >= 1e3) { // For thousands
+                    return `${(num / 1e3)} Thousand`;
+                } else {
+                    return num.toString();
+                }
+            }
 
             import party_names from "./party_names.json" assert { type: "json" };
 
@@ -58,32 +81,40 @@
                 $.fn.dataTable.moment('DD/MMM/YYYY');
 
                 $('#bondData').DataTable({
-                    paging: true,
-                    pageLength: 500,
                     ajax: {
-                        url: 'combined_in_one.json',
+                        url: 'combined_in_one_processed.json',
                         dataSrc: ''
                     },
+                    paging: true,
+                    language: {
+                        searchPanes: {
+                            count: '{total} found',
+                            countFiltered: '{shown} / {total}'
+                        }
+                    },
+                    layout: {
+                        top1: {
+                            searchPanes: {
+                                viewTotal: true
+                            }
+                        }
+                    },
+                    pageLength: 100,
                     columns: [
                         { data: 'Bond Number' },
-                        { data: 'Name of the Political Party' },
-                        { data: 'Name of the Purchaser' },
+                        { data: 'PartyShortName' },
+                        { data: 'PurchaserName' },
                         { data: 'Denominations' },
-                        { data: 'Date of Purchase' },
-                        { data: 'Date of Encashment' },
-                        { data: 'Date of Expiry' },
+                        { data: 'PurchaseDate' },
+                        { data: 'EncashmentDate' },
                         { data: 'Status' },
                     ],
                     columnDefs: [
                         {
                             targets: 1,
                             render: function (data, type, row) {
-                                let partyShortName = `${party_names[data]}`;
+                                let partyShortName = data;
                                 if (type === 'display') {
-                                    partyShortName = partyShortName ?? data;
-                                    if (!partyShortName || partyShortName === "undefined") {
-                                        return "";
-                                    }
                                     const imageUrl = `./icons/${partyShortName}.svg`; // Assuming the party name matches the image filename
                                     return `<img src="${imageUrl}"  style="height:20px; width:20px; margin-right: 5px;">${partyShortName}`;
                                 }
@@ -98,7 +129,7 @@
                                     var num = parseInt(data, 10);
                                     if (!isNaN(num)) {
                                         // Format the number using Indian numbering system
-                                        return num.toLocaleString('en-IN');
+                                        return indianNumberFormatter(num);//.toLocaleString('en-IN');
                                     }
                                 }
                                 return data;
@@ -110,7 +141,7 @@
 
 
         </script>
-
+        <script src="d3script.js"></script>
 </body>
 
 </html>
