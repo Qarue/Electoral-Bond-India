@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bond Data Visualization</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.20/css/jquery.dataTables.css">
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+    <script type="text/javascript" charset="utf8"
+        src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.21/sorting/datetime-moment.js"></script>
+
+    <style>
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <h2>Political Party Bond Encashment Analysis</h2>
+
+        <div class="row">
+            <div class="col-12">
+                <table id="bondData" class="display" style="width:100%">
+                    <thead>
+                        <tr>
+                            <th>Bond Number</th>
+                            <th>Name of the Political Party</th>
+                            <th>Name of the Purchaser</th>
+                            <th>Denominations</th>
+                            <th>Date of Purchase</th>
+                            <th>Date of Encashment</th>
+                            <th>Date of Expiry</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                </table>
+
+            </div>
+        </div>
+
+        <script src="https://d3js.org/d3.v6.min.js"></script>
+
+        <script>
+            $(document).ready(function () {
+                $.fn.dataTable.moment('DD/MMM/YYYY');
+
+                $('#bondData').DataTable({
+                    paging: true,
+                    pageLength: 500,
+                    ajax: {
+                        url: 'combined_in_one.json',
+                        dataSrc: ''
+                    },
+                    columns: [
+                        { data: 'Bond Number' },
+                        { data: 'Name of the Political Party' },
+                        { data: 'Name of the Purchaser' },
+                        { data: 'Denominations' },
+                        { data: 'Date of Purchase' },
+                        { data: 'Date of Encashment' },
+                        { data: 'Date of Expiry' },
+                        { data: 'Status' },
+                    ],
+                    columnDefs: [
+                        {
+                            targets: 3, // Assuming the Denominations column is the fourth column (index starts at 0)
+                            render: function (data, type, row) {
+                                // Only format for display, not for sorting/filtering
+                                if (type === 'display') {
+                                    var num = parseInt(data, 10);
+                                    if (!isNaN(num)) {
+                                        // Format the number using Indian numbering system
+                                        return num.toLocaleString('en-IN');
+                                    }
+                                }
+                                return data; // Return unaltered data for any other type (sorting, filtering, etc.)
+                            }
+                        }
+                    ]
+                });
+            });
+
+
+        </script>
+
+</body>
+
+</html>

@@ -36,7 +36,9 @@ def combine_bonds(buyers_data, consumers_data):
                 consumer_data.pop("Sr No.", None)
                 new_entry.update(consumer_data)
             elif buyer["Status"] == "Expired":
-                new_entry["Consumer Sr. No"] = None  # Indicate no consumer for expired bonds
+                new_entry["Consumer Sr. No"] = None
+                new_entry["Name of the Political Party"] = None
+                new_entry["Date of Encashment"] = None
             
             combined_data.append(new_entry)
 
