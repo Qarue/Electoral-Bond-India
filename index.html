@@ -15,7 +15,11 @@
     <script src="https://cdn.datatables.net/plug-ins/1.10.21/sorting/datetime-moment.js"></script>
 
     <style>
-
+        .party-symbol {
+            max-height: 100%;
+            margin-right: 5px;
+            vertical-align: middle;
+        }
     </style>
 </head>
 
@@ -45,9 +49,12 @@
         </div>
 
         <script src="https://d3js.org/d3.v6.min.js"></script>
+        <script type="module">
 
-        <script>
+            import party_names from "./party_names.json" assert { type: "json" };
+
             $(document).ready(function () {
+
                 $.fn.dataTable.moment('DD/MMM/YYYY');
 
                 $('#bondData').DataTable({
@@ -69,7 +76,22 @@
                     ],
                     columnDefs: [
                         {
-                            targets: 3, // Assuming the Denominations column is the fourth column (index starts at 0)
+                            targets: 1,
+                            render: function (data, type, row) {
+                                let partyShortName = `${party_names[data]}`;
+                                if (type === 'display') {
+                                    partyShortName = partyShortName ?? data;
+                                    if (!partyShortName || partyShortName === "undefined") {
+                                        return "";
+                                    }
+                                    const imageUrl = `./icons/${partyShortName}.svg`; // Assuming the party name matches the image filename
+                                    return `<img src="${imageUrl}"  style="height:20px; width:20px; margin-right: 5px;">${partyShortName}`;
+                                }
+                                return `${data} | ${partyShortName}`;
+                            }
+                        },
+                        {
+                            targets: 3,
                             render: function (data, type, row) {
                                 // Only format for display, not for sorting/filtering
                                 if (type === 'display') {
@@ -79,7 +101,7 @@
                                         return num.toLocaleString('en-IN');
                                     }
                                 }
-                                return data; // Return unaltered data for any other type (sorting, filtering, etc.)
+                                return data;
                             }
                         }
                     ]
